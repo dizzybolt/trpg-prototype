@@ -203,16 +203,97 @@ export default function BattlePage() {
         `${currentMonster.exp} 경험치와 ${currentMonster.gold}G를 획득했다.`
       )
 
-      setCharacter({
-        ...currentCharacter,
-        exp:
-          currentCharacter.exp +
-          currentMonster.exp,
+        const gainedExp =
+        currentMonster.exp
 
+        const gainedGold =
+        currentMonster.gold
+
+        let newLevel =
+        currentCharacter.level
+
+        let newExp =
+        currentCharacter.exp +
+        gainedExp
+
+        let newMaxHp =
+        currentCharacter.maxHp
+
+        let newMaxMp =
+        currentCharacter.maxMp
+
+        let newStr =
+        currentCharacter.str
+
+        let newDex =
+        currentCharacter.dex
+
+        let newInt =
+        currentCharacter.int
+
+        let newVit =
+        currentCharacter.vit
+
+        const requiredExp =
+        currentCharacter.level * 100
+
+        addLog(
+        `${gainedExp} 경험치와 ${gainedGold}G를 획득했다.`
+        )
+
+        if (newExp >= requiredExp) {
+        newLevel += 1
+
+        newExp -= requiredExp
+
+        const hpGrowth =
+            randomRange(4, 8)
+
+        const mpGrowth =
+            randomRange(2, 5)
+
+        newMaxHp += hpGrowth
+        newMaxMp += mpGrowth
+
+        newStr += 1
+        newDex += 1
+        newInt += 1
+        newVit += 1
+
+        addLog("")
+        addLog(
+            `LEVEL UP! → Lv.${newLevel}`
+        )
+
+        addLog(
+            `HP +${hpGrowth} / MP +${mpGrowth}`
+        )
+
+        addLog(
+            "모든 능력치가 상승했다."
+        )
+        }
+
+        setCharacter({
+        ...currentCharacter,
+
+        level: newLevel,
+        exp: newExp,
         gold:
-          currentCharacter.gold +
-          currentMonster.gold,
-      })
+            currentCharacter.gold +
+            gainedGold,
+
+        str: newStr,
+        dex: newDex,
+        int: newInt,
+        vit: newVit,
+
+        maxHp: newMaxHp,
+        maxMp: newMaxMp,
+
+        hp: newMaxHp,
+        mp: newMaxMp,
+        })
 
       setMonster(null)
 
