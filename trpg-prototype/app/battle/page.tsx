@@ -433,25 +433,67 @@ export default function BattlePage() {
 
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3">
 
-          <button
-            onClick={attack}
-            disabled={isPlayerDead}
-            className="game-button-primary disabled:opacity-40"
-          >
-            공격
-          </button>
+    <button
+        onClick={attack}
+        disabled={isPlayerDead}
+        className="game-button-primary disabled:opacity-40"
+    >
+        공격
+    </button>
 
-          <button
-            onClick={runAway}
-            disabled={isPlayerDead}
-            className="game-button disabled:opacity-40"
-          >
-            도주
-          </button>
+    <button
+        onClick={() =>
+        addLog("아직 구현되지 않았다.")
+        }
+        disabled={isPlayerDead}
+        className="game-button disabled:opacity-40"
+    >
+        기술
+    </button>
 
-        </div>
+    <button
+        onClick={() =>
+        addLog("사용 가능한 마법이 없다.")
+        }
+        disabled={isPlayerDead}
+        className="game-button disabled:opacity-40"
+    >
+        마법
+    </button>
+
+    <button
+        onClick={() =>
+        addLog("인벤토리가 비어 있다.")
+        }
+        disabled={isPlayerDead}
+        className="game-button disabled:opacity-40"
+    >
+        아이템
+    </button>
+
+    <button
+        onClick={() =>
+        addLog(
+            `${currentCharacter.name}은(는) 방어 자세를 취했다.`
+        )
+        }
+        disabled={isPlayerDead}
+        className="game-button disabled:opacity-40"
+    >
+        방어
+    </button>
+
+    <button
+        onClick={runAway}
+        disabled={isPlayerDead}
+        className="game-button disabled:opacity-40"
+    >
+        도주
+    </button>
+
+    </div>
 
         {isPlayerDead && (
           <button
