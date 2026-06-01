@@ -2,22 +2,28 @@ import Link from "next/link"
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
-      <h1 className="text-5xl font-bold">TRPG Prototype</h1>
+    <main className="game-page">
+      <div className="game-container min-h-[80vh] justify-center">
+        <div className="game-panel text-center space-y-6">
+          <div>
+            <p className="text-sm text-slate-400 mb-2">TRPG Simulation DRPG</p>
+            <h1 className="game-title text-4xl">판도라 미궁</h1>
+            <p className="text-slate-400 mt-3">
+              아카데미 탐험가를 위한 첫 번째 모험
+            </p>
+          </div>
 
-      <Link
-        href="/character"
-        className="border px-6 py-3 hover:bg-white hover:text-black"
-      >
-        새 게임
-      </Link>
+          <div className="flex flex-col gap-3">
+            <Link href="/character" className="game-button-primary">
+              새 게임
+            </Link>
 
-      <Link
-        href="/town"
-        className="border px-6 py-3 hover:bg-white hover:text-black"
-      >
-        이어하기
-      </Link>
+            <Link href="/town" className="game-button">
+              이어하기
+            </Link>
+          </div>
+        </div>
+      </div>
     </main>
   )
 }

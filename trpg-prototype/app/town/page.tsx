@@ -13,18 +13,19 @@ export default function TownPage() {
 
   if (!character) {
     return (
-      <main className="min-h-screen bg-black text-white p-6">
-        <div className="max-w-md mx-auto flex flex-col gap-4">
-          <h1 className="text-3xl font-bold">
-            저장된 캐릭터가 없습니다
-          </h1>
+      <main className="game-page">
+        <div className="game-container">
+          <h1 className="game-title">아카데미 타운</h1>
 
-          <Link
-            href="/character"
-            className="border p-4 text-center"
-          >
-            새 캐릭터 만들기
-          </Link>
+          <div className="game-panel space-y-4">
+            <p className="text-slate-400">
+              저장된 캐릭터가 없습니다.
+            </p>
+
+            <Link href="/character" className="game-button-primary block">
+              새 캐릭터 만들기
+            </Link>
+          </div>
         </div>
       </main>
     )
@@ -46,87 +47,81 @@ export default function TownPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-md mx-auto flex flex-col gap-4">
-
-        <h1 className="text-3xl font-bold">
-          아카데미 타운
-        </h1>
-
-        <div className="border p-4 space-y-2">
-
-          <p>
-            이름:
-            {" "}
-            {currentCharacter.name}
+    <main className="game-page">
+      <div className="game-container">
+        <div className="space-y-2">
+          <p className="text-sm text-slate-500">
+            Academy Hub
           </p>
 
-          <p>
-            종족 / 직업:
-            {" "}
-            {currentCharacter.race.name}
-            {" / "}
-            {currentCharacter.job.name}
-          </p>
-
-          <p>
-            레벨:
-            {" "}
-            {currentCharacter.level}
-          </p>
-
-          <p>
-            HP:
-            {" "}
-            {currentCharacter.hp}
-            /
-            {currentCharacter.maxHp}
-          </p>
-
-          <p>
-            MP:
-            {" "}
-            {currentCharacter.mp}
-            /
-            {currentCharacter.maxMp}
-          </p>
-
-          <p>
-            경험치:
-            {" "}
-            {currentCharacter.exp}
-          </p>
-
-          <p>
-            소지금:
-            {" "}
-            {currentCharacter.gold}
-            G
-          </p>
-
+          <h1 className="game-title">
+            아카데미 타운
+          </h1>
         </div>
 
-        <button
-          onClick={restAtInn}
-          className="border p-4"
-        >
-          여관에서 휴식
-        </button>
+        <div className="game-panel space-y-4">
+          <div>
+            <p className="text-sm text-slate-500">탐험가</p>
+            <p className="text-2xl font-bold text-amber-100">
+              {currentCharacter.name}
+            </p>
+            <p className="text-slate-400 mt-1">
+              {currentCharacter.race.name} / {currentCharacter.job.name}
+            </p>
+          </div>
 
-        <Link
-          href="/dungeon"
-          className="border p-4 text-center"
-        >
-          판도라 미궁 입장
-        </Link>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">레벨</p>
+              <p className="text-xl font-bold">{currentCharacter.level}</p>
+            </div>
 
-        <button
-          onClick={newGame}
-          className="border p-4 text-red-300"
-        >
-          새 게임으로 시작
-        </button>
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">소지금</p>
+              <p className="text-xl font-bold">{currentCharacter.gold} G</p>
+            </div>
 
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">HP</p>
+              <p className="text-xl font-bold">
+                {currentCharacter.hp}/{currentCharacter.maxHp}
+              </p>
+            </div>
+
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">MP</p>
+              <p className="text-xl font-bold">
+                {currentCharacter.mp}/{currentCharacter.maxMp}
+              </p>
+            </div>
+          </div>
+
+          <div className="game-panel-dark">
+            <p className="text-xs text-slate-500">경험치</p>
+            <p className="text-xl font-bold">{currentCharacter.exp}</p>
+          </div>
+        </div>
+
+        <div className="game-panel space-y-3">
+          <p className="text-sm text-slate-400">
+            시설
+          </p>
+
+          <button onClick={restAtInn} className="game-button w-full">
+            여관에서 휴식
+          </button>
+
+          <Link href="/dungeon" className="game-button-primary block">
+            판도라 미궁 입장
+          </Link>
+
+          <button
+            onClick={newGame}
+            className="game-button w-full text-red-300"
+          >
+            새 게임으로 시작
+          </button>
+        </div>
       </div>
     </main>
   )

@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg-main: #05070a;
+  --bg-panel: #0f172a;
+  --bg-panel-soft: #111827;
+  --border-main: #334155;
+  --border-bright: #64748b;
+  --text-main: #e5e7eb;
+  --text-muted: #94a3b8;
+  --accent: #d6b36a;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.game-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #111827 0%, #05070a 45%, #020617 100%);
+  color: var(--text-main);
+  padding: 24px;
+}
+
+.game-container {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.game-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.game-panel {
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid var(--border-main);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.game-panel-dark {
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid var(--border-main);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.game-button {
+  border: 1px solid var(--border-bright);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-main);
+  transition: 0.15s ease;
+}
+
+.game-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.game-button-primary {
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: center;
+  background: rgba(214, 179, 106, 0.12);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.game-button-primary:hover {
+  background: rgba(214, 179, 106, 0.22);
+}
+
+.game-input {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  padding: 14px;
+  color: var(--text-main);
+}
+
+.game-log {
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid var(--border-main);
+  border-radius: 14px;
+  padding: 16px;
+  height: 220px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
 }

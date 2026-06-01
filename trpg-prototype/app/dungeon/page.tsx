@@ -12,110 +12,247 @@ export default function DungeonPage() {
   const router = useRouter()
 
   const character = useGameStore((state) => state.character)
-  const setMonster = useGameStore((state) => state.setMonster)
-  const clearLogs = useGameStore((state) => state.clearLogs)
-  const addLog = useGameStore((state) => state.addLog)
 
-  const [directionIndex, setDirectionIndex] = useState(0)
-  const [exploreLogs, setExploreLogs] = useState<string[]>([
-    "판도라 미궁 입구에 도착했다.",
-  ])
+  const setMonster = useGameStore(
+    (state) => state.setMonster
+  )
+
+  const clearLogs = useGameStore(
+    (state) => state.clearLogs
+  )
+
+  const addLog = useGameStore(
+    (state) => state.addLog
+  )
+
+  const [directionIndex, setDirectionIndex] =
+    useState(0)
+
+  const [exploreLogs, setExploreLogs] =
+    useState<string[]>([
+      "판도라 미궁 입구에 도착했다.",
+    ])
 
   if (!character) {
     return (
-      <main className="min-h-screen bg-black text-white p-6">
-        <div className="max-w-md mx-auto flex flex-col gap-4">
-          <h1 className="text-3xl font-bold">판도라 미궁</h1>
-          <p>캐릭터 정보가 없습니다.</p>
-          <button onClick={() => router.push("/character")} className="border p-4">
-            캐릭터 생성으로 이동
-          </button>
+      <main className="game-page">
+        <div className="game-container">
+
+          <h1 className="game-title">
+            판도라 미궁
+          </h1>
+
+          <div className="game-panel space-y-4">
+
+            <p className="text-slate-400">
+              캐릭터 정보가 없습니다.
+            </p>
+
+            <button
+              onClick={() =>
+                router.push("/character")
+              }
+              className="game-button"
+            >
+              캐릭터 생성으로 이동
+            </button>
+
+          </div>
+
         </div>
       </main>
     )
   }
 
   function addExploreLog(message: string) {
-    setExploreLogs((prev) => [...prev.slice(-6), message])
+    setExploreLogs((prev) => [
+      ...prev.slice(-6),
+      message,
+    ])
   }
 
   function turnLeft() {
-    const nextIndex = (directionIndex + 3) % 4
+    const nextIndex =
+      (directionIndex + 3) % 4
+
     setDirectionIndex(nextIndex)
-    addExploreLog(`${directions[nextIndex]}을(를) 바라보았다.`)
+
+    addExploreLog(
+      `${directions[nextIndex]} 방향으로 몸을 돌렸다.`
+    )
   }
 
   function turnRight() {
-    const nextIndex = (directionIndex + 1) % 4
+    const nextIndex =
+      (directionIndex + 1) % 4
+
     setDirectionIndex(nextIndex)
-    addExploreLog(`${directions[nextIndex]}을(를) 바라보았다.`)
+
+    addExploreLog(
+      `${directions[nextIndex]} 방향으로 몸을 돌렸다.`
+    )
   }
 
   function moveForward() {
-    const encounterChance = Math.random()
+    const encounterChance =
+      Math.random()
 
-    addExploreLog(`${directions[directionIndex]}으로 한 칸 전진했다.`)
+    addExploreLog(
+      `${directions[directionIndex]} 방향으로 전진했다.`
+    )
 
     if (encounterChance < 0.7) {
-      const randomMonster = monsters[Math.floor(Math.random() * monsters.length)]
+      const randomMonster =
+        monsters[
+          Math.floor(
+            Math.random() *
+              monsters.length
+          )
+        ]
 
       clearLogs()
-      addLog("미궁 안쪽에서 기척이 느껴진다.")
-      addLog(`${randomMonster.name}이(가) 나타났다!`)
 
-      setMonster({ ...randomMonster })
+      addLog(
+        "어둠 속에서 기척이 느껴진다."
+      )
+
+      addLog(
+        `${randomMonster.name}이(가) 나타났다!`
+      )
+
+      setMonster({
+        ...randomMonster,
+      })
+
       router.push("/battle")
+
       return
     }
 
-    addExploreLog("주변은 조용하다.")
+    addExploreLog(
+      "주변은 조용하다."
+    )
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-md mx-auto flex flex-col gap-4">
-        <h1 className="text-3xl font-bold">판도라 미궁</h1>
+    <main className="game-page">
 
-        <div className="border p-4 space-y-2">
-          <p>탐험가: {character.name}</p>
-          <p>
-            HP: {character.hp}/{character.maxHp}
+      <div className="game-container">
+
+        <div className="space-y-2">
+
+          <p className="text-sm text-slate-500">
+            Dungeon Exploration
           </p>
-          <p>현재 방향: {directions[directionIndex]}</p>
+
+          <h1 className="game-title">
+            판도라 미궁
+          </h1>
+
         </div>
 
-        <div className="border h-56 flex items-center justify-center bg-zinc-950">
-          <div className="text-center space-y-2">
-            <p className="text-5xl">▲</p>
-            <p className="text-zinc-400">어둡고 차가운 미궁의 통로</p>
-            <p className="text-sm text-zinc-500">{directions[directionIndex]} 방향</p>
+        <div className="game-panel flex items-center justify-between">
+
+          <div>
+
+            <p className="text-xs text-slate-500">
+              탐험가
+            </p>
+
+            <p className="font-bold text-lg">
+              {character.name}
+            </p>
+
           </div>
+
+          <div className="text-right">
+
+            <p className="text-xs text-slate-500">
+              현재 방향
+            </p>
+
+            <p className="font-bold text-amber-200">
+              {directions[directionIndex]}
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="game-panel-dark h-72 flex flex-col items-center justify-center text-center relative overflow-hidden">
+
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-800/20 to-black/70" />
+
+          <div className="relative z-10 space-y-4">
+
+            <p className="text-6xl text-slate-500">
+              ▲
+            </p>
+
+            <div>
+
+              <p className="text-lg font-semibold">
+                어두운 미궁의 통로
+              </p>
+
+              <p className="text-sm text-slate-500 mt-2">
+                희미한 냉기가 통로를 따라 흐른다.
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
 
         <div className="grid grid-cols-3 gap-3">
-          <button onClick={turnLeft} className="border p-4">
+
+          <button
+            onClick={turnLeft}
+            className="game-button"
+          >
             ← 좌회전
           </button>
 
-          <button onClick={moveForward} className="border p-4">
+          <button
+            onClick={moveForward}
+            className="game-button-primary"
+          >
             ↑ 전진
           </button>
 
-          <button onClick={turnRight} className="border p-4">
+          <button
+            onClick={turnRight}
+            className="game-button"
+          >
             우회전 →
           </button>
+
         </div>
 
-        <button onClick={() => router.push("/town")} className="border p-4">
+        <button
+          onClick={() =>
+            router.push("/town")
+          }
+          className="game-button"
+        >
           마을로 돌아가기
         </button>
 
-        <div className="border p-4 h-48 overflow-y-auto text-sm space-y-1">
-          {exploreLogs.map((log, index) => (
-            <p key={index}>{log}</p>
-          ))}
+        <div className="game-log">
+
+          {exploreLogs.map(
+            (log, index) => (
+              <p key={index}>
+                {log}
+              </p>
+            )
+          )}
+
         </div>
+
       </div>
+
     </main>
   )
 }

@@ -8,31 +8,76 @@ import { useGameStore } from "../../lib/store"
 export default function BattlePage() {
   const router = useRouter()
 
-  const character = useGameStore((state) => state.character)
-  const setCharacter = useGameStore((state) => state.setCharacter)
+  const character = useGameStore(
+    (state) => state.character
+  )
 
-  const monster = useGameStore((state) => state.monster)
-  const setMonster = useGameStore((state) => state.setMonster)
+  const setCharacter = useGameStore(
+    (state) => state.setCharacter
+  )
 
-  const logs = useGameStore((state) => state.logs)
-  const addLog = useGameStore((state) => state.addLog)
+  const monster = useGameStore(
+    (state) => state.monster
+  )
+
+  const setMonster = useGameStore(
+    (state) => state.setMonster
+  )
+
+  const logs = useGameStore(
+    (state) => state.logs
+  )
+
+  const addLog = useGameStore(
+    (state) => state.addLog
+  )
 
   if (!character || !monster) {
     return (
-      <main className="min-h-screen bg-black text-white p-6">
-        <div className="max-w-md mx-auto flex flex-col gap-4">
-          <h1 className="text-3xl font-bold">전투 종료</h1>
+      <main className="game-page">
 
-          <p>현재 진행 중인 전투가 없습니다.</p>
+        <div className="game-container">
 
-          <button onClick={() => router.push("/dungeon")} className="border p-4">
-            계속 탐색
-          </button>
+          <div className="space-y-2">
 
-          <button onClick={() => router.push("/town")} className="border p-4">
-            마을로 돌아가기
-          </button>
+            <p className="text-sm text-slate-500">
+              Battle Result
+            </p>
+
+            <h1 className="game-title">
+              전투 종료
+            </h1>
+
+          </div>
+
+          <div className="game-panel space-y-4">
+
+            <p className="text-slate-400">
+              현재 진행 중인 전투가 없습니다.
+            </p>
+
+            <button
+              onClick={() =>
+                router.push("/dungeon")
+              }
+              className="game-button"
+            >
+              계속 탐색
+            </button>
+
+            <button
+              onClick={() =>
+                router.push("/town")
+              }
+              className="game-button"
+            >
+              마을로 돌아가기
+            </button>
+
+          </div>
+
         </div>
+
       </main>
     )
   }
@@ -40,43 +85,76 @@ export default function BattlePage() {
   const currentCharacter = character
   const currentMonster = monster
 
-  const isPlayerDead = currentCharacter.hp <= 0
+  const isPlayerDead =
+    currentCharacter.hp <= 0
 
   function attack() {
     if (isPlayerDead) return
 
-    const damage = randomRange(1, 6) + Math.floor(currentCharacter.str / 3)
-    const newMonsterHp = currentMonster.hp - damage
+    const damage =
+      randomRange(1, 6) +
+      Math.floor(
+        currentCharacter.str / 3
+      )
 
-    addLog(`${currentCharacter.name}의 공격!`)
-    addLog(`${currentMonster.name}에게 ${damage} 피해를 입혔다.`)
+    const newMonsterHp =
+      currentMonster.hp - damage
+
+    addLog(
+      `${currentCharacter.name}의 공격!`
+    )
+
+    addLog(
+      `${currentMonster.name}에게 ${damage} 피해를 입혔다.`
+    )
 
     if (newMonsterHp <= 0) {
-      addLog(`${currentMonster.name}을(를) 쓰러뜨렸다!`)
-      addLog(`${currentMonster.exp} 경험치와 ${currentMonster.gold}G를 획득했다.`)
+      addLog(
+        `${currentMonster.name}을(를) 쓰러뜨렸다!`
+      )
+
+      addLog(
+        `${currentMonster.exp} 경험치와 ${currentMonster.gold}G를 획득했다.`
+      )
 
       setCharacter({
         ...currentCharacter,
-        exp: currentCharacter.exp + currentMonster.exp,
-        gold: currentCharacter.gold + currentMonster.gold,
+        exp:
+          currentCharacter.exp +
+          currentMonster.exp,
+
+        gold:
+          currentCharacter.gold +
+          currentMonster.gold,
       })
 
       setMonster(null)
+
       return
     }
 
-    const monsterDamage = randomRange(
-      currentMonster.attackMin,
-      currentMonster.attackMax
+    const monsterDamage =
+      randomRange(
+        currentMonster.attackMin,
+        currentMonster.attackMax
+      )
+
+    const newPlayerHp =
+      currentCharacter.hp -
+      monsterDamage
+
+    addLog(
+      `${currentMonster.name}의 반격!`
     )
 
-    const newPlayerHp = currentCharacter.hp - monsterDamage
-
-    addLog(`${currentMonster.name}의 반격!`)
-    addLog(`${currentCharacter.name}은(는) ${monsterDamage} 피해를 입었다.`)
+    addLog(
+      `${currentCharacter.name}은(는) ${monsterDamage} 피해를 입었다.`
+    )
 
     if (newPlayerHp <= 0) {
-      addLog(`${currentCharacter.name}은(는) 쓰러졌다.`)
+      addLog(
+        `${currentCharacter.name}은(는) 쓰러졌다.`
+      )
 
       setCharacter({
         ...currentCharacter,
@@ -98,61 +176,173 @@ export default function BattlePage() {
   }
 
   function runAway() {
-    addLog(`${currentCharacter.name}은(는) 전투에서 도망쳤다.`)
+    addLog(
+      `${currentCharacter.name}은(는) 전투에서 도망쳤다.`
+    )
+
     setMonster(null)
+
     router.push("/dungeon")
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-md mx-auto flex flex-col gap-4">
-        <h1 className="text-3xl font-bold">전투</h1>
+    <main className="game-page">
 
-        <div className="border p-4">
-          <p className="text-xl font-bold">{currentMonster.name}</p>
-          <p>
-            HP: {currentMonster.hp}/{currentMonster.maxHp}
+      <div className="game-container">
+
+        <div className="space-y-2">
+
+          <p className="text-sm text-slate-500">
+            Battle Encounter
           </p>
+
+          <h1 className="game-title">
+            전투
+          </h1>
+
         </div>
 
-        <div className="border p-4">
-          <p>{currentCharacter.name}</p>
-          <p>
-            HP: {currentCharacter.hp}/{currentCharacter.maxHp}
-          </p>
-          <p>
-            MP: {currentCharacter.mp}/{currentCharacter.maxMp}
-          </p>
+        <div className="game-panel flex items-center justify-between">
+
+          <div>
+
+            <p className="text-xs text-slate-500">
+              적
+            </p>
+
+            <p className="text-2xl font-bold text-red-200">
+              {currentMonster.name}
+            </p>
+
+          </div>
+
+          <div className="text-right">
+
+            <p className="text-xs text-slate-500">
+              HP
+            </p>
+
+            <p className="text-xl font-bold">
+              {currentMonster.hp}
+              /
+              {currentMonster.maxHp}
+            </p>
+
+          </div>
+
         </div>
 
-        <button
-          onClick={attack}
-          disabled={isPlayerDead}
-          className="border p-4 disabled:opacity-40"
-        >
-          공격
-        </button>
+        <div className="game-panel-dark h-72 flex flex-col items-center justify-center relative overflow-hidden">
 
-        <button
-          onClick={runAway}
-          disabled={isPlayerDead}
-          className="border p-4 disabled:opacity-40"
-        >
-          도주
-        </button>
+          <div className="absolute inset-0 bg-gradient-to-b from-red-950/20 to-black/70" />
+
+          <div className="relative z-10 text-center space-y-4">
+
+            <p className="text-7xl text-red-200">
+              ☠
+            </p>
+
+            <div>
+
+              <p className="text-2xl font-bold">
+                {currentMonster.name}
+              </p>
+
+              <p className="text-sm text-slate-500 mt-2">
+                어둠 속에서 적의 기척이 느껴진다.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="game-panel">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-xs text-slate-500">
+                탐험가
+              </p>
+
+              <p className="font-bold text-lg">
+                {currentCharacter.name}
+              </p>
+
+            </div>
+
+            <div className="text-right">
+
+              <p className="text-xs text-slate-500">
+                HP / MP
+              </p>
+
+              <p className="font-bold">
+                {currentCharacter.hp}
+                /
+                {currentCharacter.maxHp}
+              </p>
+
+              <p className="text-sm text-slate-400">
+                MP
+                {" "}
+                {currentCharacter.mp}
+                /
+                {currentCharacter.maxMp}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+
+          <button
+            onClick={attack}
+            disabled={isPlayerDead}
+            className="game-button-primary disabled:opacity-40"
+          >
+            공격
+          </button>
+
+          <button
+            onClick={runAway}
+            disabled={isPlayerDead}
+            className="game-button disabled:opacity-40"
+          >
+            도주
+          </button>
+
+        </div>
 
         {isPlayerDead && (
-          <button onClick={() => router.push("/town")} className="border p-4 text-red-300">
+          <button
+            onClick={() =>
+              router.push("/town")
+            }
+            className="game-button text-red-300"
+          >
             쓰러진 상태로 마을로 돌아가기
           </button>
         )}
 
-        <div className="border p-4 h-64 overflow-y-auto">
+        <div className="game-log">
+
           {logs.map((log, index) => (
-            <p key={index}>{log}</p>
+            <p key={index}>
+              {log}
+            </p>
           ))}
+
         </div>
+
       </div>
+
     </main>
   )
 }

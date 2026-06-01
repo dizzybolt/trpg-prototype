@@ -109,101 +109,151 @@ export default function CharacterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
+    <main className="game-page">
+      <div className="game-container">
 
-      <div className="max-w-md mx-auto flex flex-col gap-4">
+        <div className="space-y-2">
+          <p className="text-sm text-slate-500">
+            Adventurer Registration
+          </p>
 
-        <h1 className="text-3xl font-bold">
-          캐릭터 생성
-        </h1>
+          <h1 className="game-title">
+            캐릭터 생성
+          </h1>
+        </div>
 
-        <input
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          placeholder="캐릭터 이름"
-          className="bg-zinc-900 border p-3"
-        />
+        <div className="game-panel space-y-4">
 
-        <select
-          value={raceId}
-          onChange={(e) =>
-            setRaceId(e.target.value)
-          }
-          className="bg-zinc-900 border p-3"
-        >
-          {races.map((race) => (
-            <option
-              key={race.id}
-              value={race.id}
+          <input
+            value={name}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
+            placeholder="캐릭터 이름"
+            className="game-input w-full"
+          />
+
+          <div className="space-y-2">
+
+            <p className="text-sm text-slate-400">
+              종족
+            </p>
+
+            <select
+              value={raceId}
+              onChange={(e) =>
+                setRaceId(e.target.value)
+              }
+              className="game-input w-full"
             >
-              {race.name}
-            </option>
-          ))}
-        </select>
+              {races.map((race) => (
+                <option
+                  key={race.id}
+                  value={race.id}
+                >
+                  {race.name}
+                </option>
+              ))}
+            </select>
 
-        <select
-          value={jobId}
-          onChange={(e) =>
-            setJobId(e.target.value)
-          }
-          className="bg-zinc-900 border p-3"
-        >
-          {jobs.map((job) => (
-            <option
-              key={job.id}
-              value={job.id}
+          </div>
+
+          <div className="space-y-2">
+
+            <p className="text-sm text-slate-400">
+              직업
+            </p>
+
+            <select
+              value={jobId}
+              onChange={(e) =>
+                setJobId(e.target.value)
+              }
+              className="game-input w-full"
             >
-              {job.name}
-            </option>
-          ))}
-        </select>
+              {jobs.map((job) => (
+                <option
+                  key={job.id}
+                  value={job.id}
+                >
+                  {job.name}
+                </option>
+              ))}
+            </select>
 
-        <div className="border p-4 space-y-2">
+          </div>
 
-          <p>
-            힘 STR:
-            {" "}
-            {stats.str}
-          </p>
+        </div>
 
-          <p>
-            민첩 DEX:
-            {" "}
-            {stats.dex}
-          </p>
+        <div className="game-panel">
 
-          <p>
-            지능 INT:
-            {" "}
-            {stats.int}
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-amber-200">
+              능력치
+            </h2>
 
-          <p>
-            건강 VIT:
-            {" "}
-            {stats.vit}
-          </p>
+            <button
+              onClick={reroll}
+              className="game-button px-4 py-2 text-sm"
+            >
+              다시 굴리기
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">
+                힘 STR
+              </p>
+
+              <p className="text-2xl font-bold">
+                {stats.str}
+              </p>
+            </div>
+
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">
+                민첩 DEX
+              </p>
+
+              <p className="text-2xl font-bold">
+                {stats.dex}
+              </p>
+            </div>
+
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">
+                지능 INT
+              </p>
+
+              <p className="text-2xl font-bold">
+                {stats.int}
+              </p>
+            </div>
+
+            <div className="game-panel-dark">
+              <p className="text-xs text-slate-500">
+                건강 VIT
+              </p>
+
+              <p className="text-2xl font-bold">
+                {stats.vit}
+              </p>
+            </div>
+
+          </div>
 
         </div>
 
         <button
-          onClick={reroll}
-          className="border p-3"
-        >
-          능력치 다시 굴리기
-        </button>
-
-        <button
           onClick={createCharacter}
-          className="bg-white text-black p-3 font-bold"
+          className="game-button-primary"
         >
           모험 시작
         </button>
 
       </div>
-
     </main>
   )
 }
