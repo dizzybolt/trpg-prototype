@@ -88,21 +88,107 @@ export default function BattlePage() {
   const isPlayerDead =
     currentCharacter.hp <= 0
 
+  function monsterTurn() {
+    const evadeChance =
+      10 +
+      Math.floor(
+        currentCharacter.dex / 3
+      )
+
+    const evadeRoll =
+      randomRange(1, 100)
+
+    addLog(
+      `${currentMonster.name}의 반격!`
+    )
+
+    if (evadeRoll <= evadeChance) {
+      addLog(
+        `${currentCharacter.name}은(는) 공격을 회피했다!`
+      )
+
+      return
+    }
+
+    const monsterDamage =
+      randomRange(
+        currentMonster.attackMin,
+        currentMonster.attackMax
+      )
+
+    const newPlayerHp =
+      currentCharacter.hp -
+      monsterDamage
+
+    addLog(
+      `${currentCharacter.name}은(는) ${monsterDamage} 피해를 입었다.`
+    )
+
+    if (newPlayerHp <= 0) {
+      addLog(
+        `${currentCharacter.name}은(는) 쓰러졌다.`
+      )
+
+      setCharacter({
+        ...currentCharacter,
+        hp: 0,
+      })
+
+      return
+    }
+
+    setCharacter({
+      ...currentCharacter,
+      hp: newPlayerHp,
+    })
+  }
+
   function attack() {
     if (isPlayerDead) return
 
-    const damage =
+    addLog(
+      `${currentCharacter.name}의 공격!`
+    )
+
+    const hitChance =
+      75 +
+      Math.floor(
+        currentCharacter.dex / 2
+      )
+
+    const hitRoll =
+      randomRange(1, 100)
+
+    if (hitRoll > hitChance) {
+      addLog(
+        "공격이 빗나갔다!"
+      )
+
+      monsterTurn()
+
+      return
+    }
+
+    const criticalRoll =
+      randomRange(1, 100)
+
+    const isCritical =
+      criticalRoll <= 10
+
+    let damage =
       randomRange(1, 6) +
       Math.floor(
         currentCharacter.str / 3
       )
 
+    if (isCritical) {
+      damage *= 2
+
+      addLog("치명타 발생!")
+    }
+
     const newMonsterHp =
       currentMonster.hp - damage
-
-    addLog(
-      `${currentCharacter.name}의 공격!`
-    )
 
     addLog(
       `${currentMonster.name}에게 ${damage} 피해를 입혔다.`
@@ -133,46 +219,12 @@ export default function BattlePage() {
       return
     }
 
-    const monsterDamage =
-      randomRange(
-        currentMonster.attackMin,
-        currentMonster.attackMax
-      )
-
-    const newPlayerHp =
-      currentCharacter.hp -
-      monsterDamage
-
-    addLog(
-      `${currentMonster.name}의 반격!`
-    )
-
-    addLog(
-      `${currentCharacter.name}은(는) ${monsterDamage} 피해를 입었다.`
-    )
-
-    if (newPlayerHp <= 0) {
-      addLog(
-        `${currentCharacter.name}은(는) 쓰러졌다.`
-      )
-
-      setCharacter({
-        ...currentCharacter,
-        hp: 0,
-      })
-
-      return
-    }
-
     setMonster({
       ...currentMonster,
       hp: newMonsterHp,
     })
 
-    setCharacter({
-      ...currentCharacter,
-      hp: newPlayerHp,
-    })
+    monsterTurn()
   }
 
   function runAway() {
