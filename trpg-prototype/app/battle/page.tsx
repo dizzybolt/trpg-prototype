@@ -108,7 +108,7 @@ export default function BattlePage() {
     setMonster(null)
   }
 
-  function monsterTurn(baseCharacter: Character) {
+  function monsterTurn(baseCharacter: Character, isDefending = false) {
     const evadeChance = 10 + Math.floor(baseCharacter.dex / 3)
     const evadeRoll = randomRange(1, 100)
 
@@ -120,10 +120,16 @@ export default function BattlePage() {
       return
     }
 
-    const monsterDamage = randomRange(
+    let monsterDamage = randomRange(
       currentMonster.attackMin,
       currentMonster.attackMax
     )
+
+    if (isDefending) {
+      const reducedDamage = Math.max(1, Math.floor(monsterDamage / 2))
+      addLog(`방어 효과로 피해가 ${monsterDamage} → ${reducedDamage} 감소했다.`)
+      monsterDamage = reducedDamage
+    }
 
     const newPlayerHp = baseCharacter.hp - monsterDamage
 
@@ -232,6 +238,13 @@ export default function BattlePage() {
     monsterTurn(characterAfterMpCost)
   }
 
+  function defend() {
+    if (isPlayerDead) return
+
+    addLog(`${currentCharacter.name}은(는) 방어 자세를 취했다.`)
+    monsterTurn(currentCharacter, true)
+  }
+
   function runAway() {
     addLog(`${currentCharacter.name}은(는) 전투에서 도망쳤다.`)
     setMonster(null)
@@ -328,7 +341,7 @@ export default function BattlePage() {
           </button>
 
           <button
-            onClick={() => addLog(`${currentCharacter.name}은(는) 방어 자세를 취했다.`)}
+            onClick={defend}
             disabled={isPlayerDead}
             className="game-button disabled:opacity-40"
           >
