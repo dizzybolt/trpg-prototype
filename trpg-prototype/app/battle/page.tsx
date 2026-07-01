@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation"
 import { processAutoBattleTurn } from "../../lib/battleEngine"
 import { useGameStore } from "../../lib/store"
 
+import ActionButton from "../../components/ui/ActionButton"
+import BattleLog from "../../components/ui/BattleLog"
+import BattleHUD from "../../components/battle/BattleHUD"
+import BattleScene from "../../components/battle/BattleScene"
+
 type BattleResult = "victory" | "defeat" | "escaped" | null
 
 export default function BattlePage() {
@@ -70,24 +75,20 @@ export default function BattlePage() {
               {battleResult === "escaped" && "전투에서 이탈했다."}
             </p>
 
-            <div className="game-log">
-              {logs.map((log, index) => (
-                <p key={index}>{log}</p>
-              ))}
-            </div>
+            <BattleLog logs={logs} maxHeight="h-72" />
 
             {battleResult !== "defeat" && (
-              <button
+              <ActionButton
+                variant="primary"
                 onClick={() => router.push("/dungeon")}
-                className="game-button-primary"
               >
                 계속 탐색
-              </button>
+              </ActionButton>
             )}
 
-            <button onClick={() => router.push("/town")} className="game-button">
+            <ActionButton onClick={() => router.push("/town")}>
               마을로 돌아가기
-            </button>
+            </ActionButton>
           </div>
         </div>
       </main>
@@ -103,13 +104,13 @@ export default function BattlePage() {
           <div className="game-panel space-y-4">
             <p className="text-slate-400">현재 진행 중인 전투가 없습니다.</p>
 
-            <button onClick={() => router.push("/dungeon")} className="game-button">
+            <ActionButton onClick={() => router.push("/dungeon")}>
               계속 탐색
-            </button>
+            </ActionButton>
 
-            <button onClick={() => router.push("/town")} className="game-button">
+            <ActionButton onClick={() => router.push("/town")}>
               마을로 돌아가기
-            </button>
+            </ActionButton>
           </div>
         </div>
       </main>
@@ -139,76 +140,36 @@ export default function BattlePage() {
         <p className="text-sm text-slate-500">Auto Battle Simulation</p>
         <h1 className="game-title">전투</h1>
 
-        <div className="game-panel flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-500">탐험가</p>
-            <p className="text-xl font-bold text-amber-100">{character.name}</p>
-            <p className="text-sm text-slate-400">
-              HP {character.hp}/{character.maxHp}
-            </p>
-            <p className="text-sm text-slate-400">
-              MP {character.mp}/{character.maxMp}
-            </p>
-            <p className="text-sm text-slate-400">
-              포션 {character.potions ?? 0}개
-            </p>
-          </div>
+        <BattleHUD character={character} />
 
-          <div className="text-right">
-            <p className="text-xs text-slate-500">적</p>
-            <p className="text-xl font-bold text-red-200">{monster.name}</p>
-            <p className="text-sm text-slate-400">
-              HP {monster.hp}/{monster.maxHp}
-            </p>
-          </div>
-        </div>
+        <BattleScene
+          character={character}
+          monster={monster}
+          location="판도라 미궁"
+        />
 
-        <div className="game-panel-dark h-72 flex items-center justify-between px-8">
-          <div className="text-center">
-            <p className="text-6xl">🛡️</p>
-            <p className="mt-2 text-amber-100">{character.name}</p>
-          </div>
-
-          <div className="text-center text-slate-500">
-            {isRunning ? "BATTLE" : "READY"}
-          </div>
-
-          <div className="text-center">
-            <p className="text-6xl">☠</p>
-            <p className="mt-2 text-red-200">{monster.name}</p>
-          </div>
-        </div>
-
-        <div className="game-log">
-          {logs.map((log, index) => (
-            <p key={index}>{log}</p>
-          ))}
-        </div>
+        <BattleLog logs={logs} />
 
         <div className="grid grid-cols-2 gap-3">
-          <button
+          <ActionButton
+            variant="primary"
             onClick={startBattle}
             disabled={isRunning}
-            className="game-button-primary disabled:opacity-40"
           >
             전투 시작
-          </button>
+          </ActionButton>
 
-          <button
-            onClick={pauseBattle}
-            disabled={!isRunning}
-            className="game-button disabled:opacity-40"
-          >
+          <ActionButton onClick={pauseBattle} disabled={!isRunning}>
             일시정지
-          </button>
+          </ActionButton>
 
-          <button onClick={escapeBattle} className="game-button">
+          <ActionButton onClick={escapeBattle} variant="danger">
             도주
-          </button>
+          </ActionButton>
 
-          <button onClick={() => router.push("/town")} className="game-button">
+          <ActionButton onClick={() => router.push("/town")}>
             마을로 돌아가기
-          </button>
+          </ActionButton>
         </div>
       </div>
     </main>
