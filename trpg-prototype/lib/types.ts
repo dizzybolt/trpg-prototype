@@ -22,6 +22,7 @@ export type Character = {
   level: number
   exp: number
   gold: number
+  potions: number
 
   str: number
   dex: number

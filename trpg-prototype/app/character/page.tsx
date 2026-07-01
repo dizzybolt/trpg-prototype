@@ -88,6 +88,7 @@ export default function CharacterPage() {
       level: 1,
       exp: 0,
       gold: 0,
+      potions: 3,
 
       str: finalStr,
       dex: finalDex,
