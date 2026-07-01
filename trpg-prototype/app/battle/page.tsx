@@ -140,12 +140,16 @@ export default function BattlePage() {
         <p className="text-sm text-slate-500">Auto Battle Simulation</p>
         <h1 className="game-title">전투</h1>
 
-        <BattleHUD character={character} />
+        <BattleHUD
+          character={character}
+          monster={monster}
+        />
 
         <BattleScene
           character={character}
           monster={monster}
           location="판도라 미궁"
+          isRunning={isRunning}
         />
 
         <BattleLog logs={logs} />

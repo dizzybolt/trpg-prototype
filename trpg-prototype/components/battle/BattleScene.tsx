@@ -6,55 +6,66 @@ type BattleSceneProps = {
   character: Character
   monster: Monster
   location?: string
+  isRunning?: boolean
 }
 
 export default function BattleScene({
   character,
   monster,
-  location = "판도라의 숲",
+  location = "판도라 미궁",
+  isRunning = false,
 }: BattleSceneProps) {
   return (
-    <Panel title={location}>
-      <div className="flex items-center justify-between gap-8 py-6">
-        {/* 플레이어 */}
-        <div className="flex flex-col items-center flex-1">
-          <Portrait
-            name={character.name}
-            size="lg"
-          />
+    <Panel
+      title={location}
+      rightContent={
+        <span className="text-xs font-bold text-slate-500">
+          {isRunning ? "AUTO BATTLE" : "READY"}
+        </span>
+      }
+      className="relative overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-800/20 via-slate-950/70 to-black/90" />
 
-          <p className="mt-4 text-lg font-bold text-amber-200">
+      <div className="relative z-10 min-h-72 flex items-center justify-between gap-4 py-6">
+        <div className="flex flex-1 flex-col items-center">
+          <Portrait name={character.name} size="lg" />
+
+          <p className="mt-3 text-lg font-bold text-amber-200">
             {character.name}
           </p>
 
-          <p className="text-sm text-slate-400">
-            Lv.{character.level}
-          </p>
-        </div>
-
-        {/* 중앙 */}
-        <div className="flex flex-col items-center justify-center">
-          <div className="rounded-full border border-slate-700 bg-slate-900 px-6 py-3">
-            <span className="text-sm tracking-[0.3em] text-slate-400">
-              BATTLE
+          <div className="mt-2 flex gap-1 text-xs text-slate-500">
+            <span className="rounded-full border border-slate-700 px-2 py-1">
+              버프 없음
             </span>
           </div>
         </div>
 
-        {/* 몬스터 */}
-        <div className="flex flex-col items-center flex-1">
-          <Portrait
-            name={monster.name}
-            size="lg"
-          />
+        <div className="flex flex-col items-center justify-center px-2">
+          <div className="rounded-full border border-amber-500/40 bg-black/50 px-5 py-3 shadow-lg shadow-black/40">
+            <span className="text-xs tracking-[0.35em] text-amber-200">
+              VS
+            </span>
+          </div>
 
-          <p className="mt-4 text-lg font-bold text-red-300">
+          <p className="mt-3 text-xs text-slate-600">
+            {isRunning ? "전투 진행 중" : "전투 대기"}
+          </p>
+        </div>
+
+        <div className="flex flex-1 flex-col items-center">
+          <Portrait name={monster.name} size="lg" />
+
+          <p className="mt-3 text-lg font-bold text-red-300">
             {monster.name}
           </p>
 
-          <p className="text-sm text-slate-400">
-            HP {monster.hp}/{monster.maxHp}
-          </p>
+          <div className="mt-2 flex gap-1 text-xs text-slate-500">
+            <span className="rounded-full border border-slate-700 px-2 py-1">
+              상태 이상 없음
+            </span>
+          </div>
         </div>
       </div>
     </Panel>
