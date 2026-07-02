@@ -6,13 +6,29 @@ type MiniMapProps = {
 }
 
 export default function MiniMap({ map }: MiniMapProps) {
+
+  function getPlayerSymbol() {
+    switch (map.player.direction) {
+      case "north":
+        return "▲"
+      case "east":
+        return "▶"
+      case "south":
+        return "▼"
+      case "west":
+        return "◀"
+      default:
+        return "▲"
+    }
+  }  
+  
   function getTileSymbol(x: number, y: number) {
     const tile = map.tiles[y][x]
 
     // 현재 플레이어
     if (map.player.x === x && map.player.y === y) {
       return {
-        symbol: "▲",
+        symbol: getPlayerSymbol(),
         className: "text-amber-300",
       }
     }

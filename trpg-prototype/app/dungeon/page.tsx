@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import MiniMap from "../../components/dungeon/MiniMap"
@@ -22,12 +22,19 @@ export default function DungeonPage() {
   const clearLogs = useGameStore((state) => state.clearLogs)
   const addLog = useGameStore((state) => state.addLog)
 
-  const [dungeonMap, setDungeonMap] = useState(() => createDungeonMap())
+  const dungeonMap = useGameStore((state) => state.dungeonMap)
+  const setDungeonMap = useGameStore((state) => state.setDungeonMap)
 
   const [exploreLogs, setExploreLogs] = useState<string[]>([
     "판도라 미궁 1층에 진입했다.",
     "주변을 살피며 천천히 전진할 준비를 한다.",
   ])
+
+  useEffect(() => {
+    if (!dungeonMap) {
+      setDungeonMap(createDungeonMap())
+    }
+  }, [dungeonMap, setDungeonMap])
 
   if (!character) {
     return (
@@ -50,24 +57,51 @@ export default function DungeonPage() {
     )
   }
 
+  if (!dungeonMap) {
+    return (
+      <main className="game-page">
+        <div className="game-container">
+          <h1 className="game-title">판도라 미궁</h1>
+          <div className="game-panel">
+            <p className="text-slate-400">던전 지도를 불러오는 중...</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   function addExploreLog(message: string) {
     setExploreLogs((prev) => [...prev.slice(-7), message])
   }
 
   function handleTurnLeft() {
-    const nextMap = turnDungeonLeft(dungeonMap)
+    const map = dungeonMap
+    if (!map) return
+
+    const nextMap = turnDungeonLeft(map)
+
     setDungeonMap(nextMap)
     addExploreLog(`${getDirectionLabel(nextMap.player.direction)} 방향으로 몸을 돌렸다.`)
   }
 
   function handleTurnRight() {
-    const nextMap = turnDungeonRight(dungeonMap)
+    const map = dungeonMap
+    if (!map) return
+
+    const nextMap = turnDungeonRight(map)
+
     setDungeonMap(nextMap)
     addExploreLog(`${getDirectionLabel(nextMap.player.direction)} 방향으로 몸을 돌렸다.`)
   }
 
   function handleMoveForward() {
-    const result = moveDungeonForward(dungeonMap)
+    const map = dungeonMap
+    if (!map) return
+
+    const result = moveDungeonForward(map)
+
+    setDungeonMap(result.map)
+    addExploreLog(result.message)
 
     setDungeonMap(result.map)
     addExploreLog(result.message)
@@ -89,9 +123,7 @@ export default function DungeonPage() {
       return
     }
 
-    const encounterChance = Math.random()
-
-    if (encounterChance < 0.45) {
+    if (Math.random() < 0.45) {
       const randomMonster = generateMonster("pandora_maze")
 
       clearLogs()
@@ -135,9 +167,7 @@ export default function DungeonPage() {
 
           <div className="relative z-10 space-y-2">
             <p className="text-4xl text-slate-500">▲</p>
-
             <p className="text-lg font-semibold">어두운 미궁의 통로</p>
-
             <p className="text-sm text-slate-500">
               현재 좌표: X {dungeonMap.player.x}, Y {dungeonMap.player.y}
             </p>
