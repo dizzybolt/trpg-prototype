@@ -44,7 +44,7 @@ function isWalkable(type: TileType) {
   return type !== "wall" && type !== "door_closed"
 }
 
-export function createDungeonMap(): DungeonMap {
+export function createDungeonMap(floor = 1): DungeonMap {
   const tiles: Tile[][] = []
 
   for (let y = 0; y < MAP_HEIGHT; y += 1) {
@@ -76,7 +76,7 @@ export function createDungeonMap(): DungeonMap {
   const map: DungeonMap = {
     id: "pandora_maze",
     name: "판도라 미궁",
-    floor: 1,
+    floor,
     width: MAP_WIDTH,
     height: MAP_HEIGHT,
     tiles,

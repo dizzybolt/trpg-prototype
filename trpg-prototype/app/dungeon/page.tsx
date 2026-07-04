@@ -29,6 +29,7 @@ export default function DungeonPage() {
     "판도라 미궁 1층에 진입했다.",
     "주변을 살피며 천천히 전진할 준비를 한다.",
   ])
+  const [canUseStairs, setCanUseStairs] = useState(false)
 
   useEffect(() => {
     if (!dungeonMap) {
@@ -98,6 +99,7 @@ export default function DungeonPage() {
     const map = dungeonMap
     if (!map) return
 
+    setCanUseStairs(false)
     const result = moveDungeonForward(map)
 
     setDungeonMap(result.map)
@@ -110,6 +112,7 @@ export default function DungeonPage() {
 
     if (result.tile.type === "stairs_down") {
       addExploreLog("아래층으로 내려가는 계단을 발견했다.")
+      setCanUseStairs(true)
       return
     }
 
@@ -138,6 +141,21 @@ export default function DungeonPage() {
     addExploreLog("주변은 조용하다.")
   }
 
+  function handleGoDownStairs() {
+    if (!dungeonMap) return
+
+    const nextFloor = dungeonMap.floor + 1
+    const nextMap = createDungeonMap(nextFloor)
+
+    setDungeonMap(nextMap)
+    setCanUseStairs(false)
+
+    setExploreLogs([
+      `판도라 미궁 ${nextFloor}층에 도착했다.`,
+      "계단 위쪽에서 희미한 냉기가 흘러내린다.",
+    ])
+  }
+  
   return (
     <main className="game-page">
       <div className="game-container">
@@ -176,17 +194,23 @@ export default function DungeonPage() {
 
         <div className="grid grid-cols-3 gap-3">
           <button onClick={handleTurnLeft} className="game-button">
-            ← 좌회전
+            ◀
           </button>
 
           <button onClick={handleMoveForward} className="game-button-primary">
-            ↑ 전진
+            ▲
           </button>
 
           <button onClick={handleTurnRight} className="game-button">
-            우회전 →
+            ▶
           </button>
         </div>
+
+        {canUseStairs && (
+          <button onClick={handleGoDownStairs} className="game-button-primary">
+            아래층으로 내려가기
+          </button>
+        )}
 
         <button onClick={() => router.push("/town")} className="game-button">
           마을로 돌아가기
