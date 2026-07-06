@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
-import MiniMap from "../../components/dungeon/MiniMap"
+import ActionBar from "../../components/ui/ActionBar"
+import DungeonView from "../../components/dungeon/DungeonView"
+import GameLog from "../../components/ui/GameLog"
+import PartyHUD from "../../components/ui/PartyHUD"
+
 import { useGameStore } from "../../lib/store"
 import { generateMonster } from "../../lib/monster/monsterGenerator"
 import {
@@ -13,6 +17,11 @@ import {
   turnLeft as turnDungeonLeft,
   turnRight as turnDungeonRight,
 } from "../../lib/dungeon/dungeonMapEngine"
+
+type LogEntry = {
+  text: string
+  type?: "normal" | "battle" | "story" | "heal"
+}
 
 export default function DungeonPage() {
   const router = useRouter()
@@ -25,11 +34,10 @@ export default function DungeonPage() {
   const dungeonMap = useGameStore((state) => state.dungeonMap)
   const setDungeonMap = useGameStore((state) => state.setDungeonMap)
 
-  const [exploreLogs, setExploreLogs] = useState<string[]>([
-    "판도라 미궁 1층에 진입했다.",
-    "주변을 살피며 천천히 전진할 준비를 한다.",
+  const [exploreLogs, setExploreLogs] = useState<LogEntry[]>([
+    { text: "판도라 미궁 1층에 진입했다.", type: "story" },
+    { text: "주변을 살피며 천천히 전진할 준비를 한다." },
   ])
-  const [canUseStairs, setCanUseStairs] = useState(false)
 
   useEffect(() => {
     if (!dungeonMap) {
@@ -63,6 +71,7 @@ export default function DungeonPage() {
       <main className="game-page">
         <div className="game-container">
           <h1 className="game-title">판도라 미궁</h1>
+
           <div className="game-panel">
             <p className="text-slate-400">던전 지도를 불러오는 중...</p>
           </div>
@@ -71,8 +80,8 @@ export default function DungeonPage() {
     )
   }
 
-  function addExploreLog(message: string) {
-    setExploreLogs((prev) => [...prev.slice(-7), message])
+  function addExploreLog(text: string, type: LogEntry["type"] = "normal") {
+    setExploreLogs((prev) => [...prev.slice(-7), { text, type }])
   }
 
   function handleTurnLeft() {
@@ -99,11 +108,7 @@ export default function DungeonPage() {
     const map = dungeonMap
     if (!map) return
 
-    setCanUseStairs(false)
     const result = moveDungeonForward(map)
-
-    setDungeonMap(result.map)
-    addExploreLog(result.message)
 
     setDungeonMap(result.map)
     addExploreLog(result.message)
@@ -111,18 +116,17 @@ export default function DungeonPage() {
     if (!result.moved) return
 
     if (result.tile.type === "stairs_down") {
-      addExploreLog("아래층으로 내려가는 계단을 발견했다.")
-      setCanUseStairs(true)
+      addExploreLog("아래층으로 내려가는 계단을 발견했다.", "story")
       return
     }
 
     if (result.tile.type === "treasure") {
-      addExploreLog("낡은 보물상자를 발견했다. 아직 열 수는 없다.")
+      addExploreLog("낡은 보물상자를 발견했다. 아직 열 수는 없다.", "story")
       return
     }
 
     if (result.tile.type === "trap") {
-      addExploreLog("바닥에 수상한 흔적이 보인다. 함정일지도 모른다.")
+      addExploreLog("바닥에 수상한 흔적이 보인다. 함정일지도 모른다.", "battle")
       return
     }
 
@@ -141,86 +145,80 @@ export default function DungeonPage() {
     addExploreLog("주변은 조용하다.")
   }
 
-  function handleGoDownStairs() {
-    if (!dungeonMap) return
-
-    const nextFloor = dungeonMap.floor + 1
-    const nextMap = createDungeonMap(nextFloor)
-
-    setDungeonMap(nextMap)
-    setCanUseStairs(false)
-
-    setExploreLogs([
-      `판도라 미궁 ${nextFloor}층에 도착했다.`,
-      "계단 위쪽에서 희미한 냉기가 흘러내린다.",
-    ])
+  function handleInspect() {
+    addExploreLog("주변을 자세히 살펴보았다.")
   }
-  
+
+  function handleInteract() {
+    addExploreLog("상호작용할 수 있는 대상이 없다.")
+  }
+
   return (
     <main className="game-page">
-      <div className="game-container">
-        <div className="space-y-2">
-          <p className="text-sm text-slate-500">Dungeon Exploration</p>
-          <h1 className="game-title">판도라 미궁</h1>
-        </div>
-
-        <div className="game-panel flex items-center justify-between">
+      <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-4">
+        <header className="flex items-end justify-between">
           <div>
-            <p className="text-xs text-slate-500">탐험가</p>
-            <p className="font-bold text-lg">{character.name}</p>
+            <p className="text-sm text-slate-500">Dungeon Exploration</p>
+            <h1 className="game-title">판도라 미궁</h1>
           </div>
 
-          <div className="text-right">
-            <p className="text-xs text-slate-500">현재 방향</p>
-            <p className="font-bold text-amber-200">
-              {getDirectionLabel(dungeonMap.player.direction)}
-            </p>
+          <div className="text-right text-sm text-slate-400">
+            <p>Floor {dungeonMap.floor}</p>
+            <p>방향: {getDirectionLabel(dungeonMap.player.direction)}</p>
           </div>
-        </div>
+        </header>
 
-        <MiniMap map={dungeonMap} />
+        <section className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
+          <div className="flex flex-col gap-4">
+            <DungeonView map={dungeonMap} />
 
-        <div className="game-panel-dark h-40 flex flex-col items-center justify-center text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-800/20 to-black/70" />
-
-          <div className="relative z-10 space-y-2">
-            <p className="text-4xl text-slate-500">▲</p>
-            <p className="text-lg font-semibold">어두운 미궁의 통로</p>
-            <p className="text-sm text-slate-500">
-              현재 좌표: X {dungeonMap.player.x}, Y {dungeonMap.player.y}
-            </p>
+            <GameLog title="탐험 기록" logs={exploreLogs} />
           </div>
-        </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          <button onClick={handleTurnLeft} className="game-button">
-            ◀
-          </button>
+          <PartyHUD members={[character]} />
+        </section>
 
-          <button onClick={handleMoveForward} className="game-button-primary">
-            ▲
-          </button>
-
-          <button onClick={handleTurnRight} className="game-button">
-            ▶
-          </button>
-        </div>
-
-        {canUseStairs && (
-          <button onClick={handleGoDownStairs} className="game-button-primary">
-            아래층으로 내려가기
-          </button>
-        )}
-
-        <button onClick={() => router.push("/town")} className="game-button">
-          마을로 돌아가기
-        </button>
-
-        <div className="game-log">
-          {exploreLogs.map((log, index) => (
-            <p key={index}>{log}</p>
-          ))}
-        </div>
+        <ActionBar
+          actions={[
+            {
+              label: "좌회전",
+              hotkey: "Q",
+              icon: "↺",
+              onClick: handleTurnLeft,
+            },
+            {
+              label: "전진",
+              hotkey: "W",
+              icon: "↑",
+              variant: "primary",
+              onClick: handleMoveForward,
+            },
+            {
+              label: "우회전",
+              hotkey: "E",
+              icon: "↻",
+              onClick: handleTurnRight,
+            },
+            {
+              label: "조사",
+              hotkey: "R",
+              icon: "🔍",
+              onClick: handleInspect,
+            },
+            {
+              label: "상호작용",
+              hotkey: "F",
+              icon: "✋",
+              onClick: handleInteract,
+            },
+            {
+              label: "메뉴",
+              hotkey: "ESC",
+              icon: "☰",
+              onClick: () => router.push("/town"),
+            },
+          ]}
+        />
       </div>
     </main>
   )
