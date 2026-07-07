@@ -96,7 +96,7 @@ export default function MiniMap({
         })}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-400">
+      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-400 lg:absolute lg:right-3 lg:top-3 lg:mt-0 lg:grid-cols-1">
         <span>▲ 플레이어</span>
         <span>· 길</span>
         <span>■ 벽</span>

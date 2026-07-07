@@ -2,6 +2,9 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+
+import ActionBar from "../../components/ui/ActionBar"
+import PartyHUD from "../../components/ui/PartyHUD"
 import { useGameStore } from "../../lib/store"
 
 export default function TownPage() {
@@ -14,13 +17,13 @@ export default function TownPage() {
   if (!character) {
     return (
       <main className="game-page">
-        <div className="game-container">
-          <h1 className="game-title">아카데미 타운</h1>
+        <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center gap-4 p-4">
+          <h1 className="text-3xl font-bold text-amber-200">마을</h1>
 
-          <div className="game-panel space-y-4">
+          <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
             <p className="text-slate-400">저장된 캐릭터가 없습니다.</p>
 
-            <Link href="/character" className="game-button-primary block">
+            <Link href="/character" className="game-button-primary mt-4 block">
               새 캐릭터 만들기
             </Link>
           </div>
@@ -29,12 +32,7 @@ export default function TownPage() {
     )
   }
 
-  const currentCharacter = character
-
-  const hitChance = 75 + Math.floor(currentCharacter.dex / 2)
-  const evadeChance = 10 + Math.floor(currentCharacter.dex / 3)
-  const criticalChance = 10
-  const nextLevelExp = currentCharacter.level * 100
+const currentCharacter = character
 
   function restAtInn() {
     setCharacter({
@@ -51,130 +49,136 @@ export default function TownPage() {
 
   return (
     <main className="game-page">
-      <div className="game-container">
-        <div className="space-y-2">
-          <p className="text-sm text-slate-500">Academy Hub</p>
-          <h1 className="game-title">아카데미 타운</h1>
-        </div>
-
-        <div className="game-panel space-y-4">
+      <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-3 p-3 lg:p-4">
+        <header className="flex items-end justify-between">
           <div>
-            <p className="text-sm text-slate-500">탐험가</p>
-            <p className="text-2xl font-bold text-amber-100">
-              {currentCharacter.name}
-            </p>
-            <p className="text-slate-400 mt-1">
-              {currentCharacter.race.name} / {currentCharacter.job.name}
-            </p>
+            <p className="text-xs text-slate-500 lg:text-sm">Town</p>
+            <h1 className="text-2xl font-bold text-amber-200 lg:text-3xl">
+              마을
+            </h1>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">레벨</p>
-              <p className="text-xl font-bold">{currentCharacter.level}</p>
+          <div className="text-right text-sm text-slate-400">
+            <p>골드 {currentCharacter.gold} G</p>
+            <p>Lv.{currentCharacter.level}</p>
+            <PartyHUD members={[currentCharacter]} />
+          </div>
+        </header>
+
+        <section className="grid flex-1 grid-cols-1 gap-3 lg:grid-cols-[1fr_320px]">
+          <div className="flex flex-col gap-3">
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+              <div className="h-64 overflow-hidden rounded-lg border border-slate-800 bg-black lg:h-80">
+                <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-black text-center">
+                  <p className="text-5xl">🏘️</p>
+                  <p className="mt-4 text-xl font-bold text-amber-200">
+                    아카데미 타운
+                  </p>
+                  <p className="mt-2 text-sm text-slate-500">
+                    모험가들이 모여 정보를 교환하는 작은 마을.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-lg border border-slate-800 bg-black/40 p-3">
+                <p className="text-xs text-slate-500">LOCATION</p>
+                <p className="mt-1 font-bold text-amber-200">아카데미 타운</p>
+                <p className="mt-1 text-sm text-slate-400">
+                  여관, 상점, 길드, 대장간이 모여 있는 탐험의 거점이다.
+                </p>
+              </div>
             </div>
 
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">소지금</p>
-              <p className="text-xl font-bold">{currentCharacter.gold} G</p>
-            </div>
-
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">HP</p>
-              <p className="text-xl font-bold">
-                {currentCharacter.hp}/{currentCharacter.maxHp}
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+              <p className="mb-3 text-sm font-bold tracking-widest text-amber-200">
+                MENU
               </p>
-            </div>
 
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">MP</p>
-              <p className="text-xl font-bold">
-                {currentCharacter.mp}/{currentCharacter.maxMp}
-              </p>
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+                <button onClick={restAtInn} className="game-button">
+                  <div className="text-2xl">🛏️</div>
+                  <div className="mt-2 font-bold">여관</div>
+                  <div className="text-xs text-slate-500">HP/MP 회복</div>
+                </button>
 
-          <div className="game-panel-dark">
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-slate-500">경험치</p>
-              <p className="text-sm text-slate-400">
-                다음 레벨까지 {nextLevelExp - currentCharacter.exp}
-              </p>
-            </div>
+                <button
+                  onClick={() => alert("상점은 준비 중입니다.")}
+                  className="game-button"
+                >
+                  <div className="text-2xl">💰</div>
+                  <div className="mt-2 font-bold">상점</div>
+                  <div className="text-xs text-slate-500">아이템 구매</div>
+                </button>
 
-            <p className="text-xl font-bold mt-1">
-              {currentCharacter.exp}/{nextLevelExp}
-            </p>
-          </div>
-        </div>
+                <button
+                  onClick={() => alert("대장간은 준비 중입니다.")}
+                  className="game-button"
+                >
+                  <div className="text-2xl">⚒️</div>
+                  <div className="mt-2 font-bold">대장간</div>
+                  <div className="text-xs text-slate-500">장비 강화</div>
+                </button>
 
-        <div className="game-panel space-y-4">
-          <h2 className="text-lg font-bold text-amber-200">기본 능력치</h2>
+                <button
+                  onClick={() => alert("게시판은 준비 중입니다.")}
+                  className="game-button"
+                >
+                  <div className="text-2xl">📜</div>
+                  <div className="mt-2 font-bold">게시판</div>
+                  <div className="text-xs text-slate-500">퀘스트 확인</div>
+                </button>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">힘 STR</p>
-              <p className="text-2xl font-bold">{currentCharacter.str}</p>
-            </div>
+                <button
+                  onClick={() => alert("창고는 준비 중입니다.")}
+                  className="game-button"
+                >
+                  <div className="text-2xl">📦</div>
+                  <div className="mt-2 font-bold">창고</div>
+                  <div className="text-xs text-slate-500">아이템 보관</div>
+                </button>
 
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">민첩 DEX</p>
-              <p className="text-2xl font-bold">{currentCharacter.dex}</p>
-            </div>
-
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">지능 INT</p>
-              <p className="text-2xl font-bold">{currentCharacter.int}</p>
-            </div>
-
-            <div className="game-panel-dark">
-              <p className="text-xs text-slate-500">건강 VIT</p>
-              <p className="text-2xl font-bold">{currentCharacter.vit}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="game-panel space-y-4">
-          <h2 className="text-lg font-bold text-amber-200">전투 능력</h2>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div className="game-panel-dark text-center">
-              <p className="text-xs text-slate-500">명중률</p>
-              <p className="text-xl font-bold">{hitChance}%</p>
-            </div>
-
-            <div className="game-panel-dark text-center">
-              <p className="text-xs text-slate-500">회피율</p>
-              <p className="text-xl font-bold">{evadeChance}%</p>
-            </div>
-
-            <div className="game-panel-dark text-center">
-              <p className="text-xs text-slate-500">치명타</p>
-              <p className="text-xl font-bold">{criticalChance}%</p>
+                <button onClick={() => router.push("/dungeon")} className="game-button-primary">
+                  <div className="text-2xl">⛩️</div>
+                  <div className="mt-2 font-bold">미궁 입장</div>
+                  <div className="text-xs text-slate-900">판도라 미궁</div>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="game-panel-dark text-sm text-slate-400 leading-6">
-            <p>공격 피해: 1d6 + 힘 보정</p>
-            <p>강공격: MP 3 소모 / 높은 피해 / 낮은 명중률</p>
-          </div>
-        </div>
+          <PartyHUD members={[character]} />
+        </section>
 
-        <div className="game-panel space-y-3">
-          <p className="text-sm text-slate-400">시설</p>
-
-          <button onClick={restAtInn} className="game-button w-full">
-            여관에서 휴식
-          </button>
-
-          <Link href="/dungeon" className="game-button-primary block">
-            판도라 미궁 입장
-          </Link>
-
-          <button onClick={newGame} className="game-button w-full text-red-300">
-            새 게임으로 시작
-          </button>
-        </div>
+        <ActionBar
+          actions={[
+            {
+              label: "여관",
+              hotkey: "I",
+              icon: "🛏️",
+              onClick: restAtInn,
+            },
+            {
+              label: "미궁",
+              hotkey: "W",
+              icon: "↑",
+              variant: "primary",
+              onClick: () => router.push("/dungeon"),
+            },
+            {
+              label: "새 게임",
+              hotkey: "N",
+              icon: "↺",
+              variant: "danger",
+              onClick: newGame,
+            },
+            {
+              label: "메뉴",
+              hotkey: "ESC",
+              icon: "☰",
+              onClick: () => alert("메뉴는 준비 중입니다."),
+            },
+          ]}
+        />
       </div>
     </main>
   )

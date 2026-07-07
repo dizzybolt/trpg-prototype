@@ -3,15 +3,20 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
+import ActionBar from "../../components/ui/ActionBar"
+import GameLog from "../../components/ui/GameLog"
+import PartyHUD from "../../components/ui/PartyHUD"
+import BattleScene from "../../components/battle/BattleScene"
+
 import { processAutoBattleTurn } from "../../lib/battleEngine"
 import { useGameStore } from "../../lib/store"
 
-import ActionButton from "../../components/ui/ActionButton"
-import BattleLog from "../../components/ui/BattleLog"
-import BattleHUD from "../../components/battle/BattleHUD"
-import BattleScene from "../../components/battle/BattleScene"
-
 type BattleResult = "victory" | "defeat" | "escaped" | null
+
+type LogEntry = {
+  text: string
+  type?: "normal" | "battle" | "story" | "heal"
+}
 
 export default function BattlePage() {
   const router = useRouter()
@@ -28,6 +33,21 @@ export default function BattlePage() {
   const [isRunning, setIsRunning] = useState(false)
   const [battleResult, setBattleResult] = useState<BattleResult>(null)
 
+  const gameLogs: LogEntry[] = logs.map((log) => ({
+    text: log,
+    type:
+      log.includes("회복") || log.includes("포션")
+        ? "heal"
+        : log.includes("피해") ||
+          log.includes("공격") ||
+          log.includes("치명타") ||
+          log.includes("쓰러졌다")
+        ? "battle"
+        : log.includes("획득") || log.includes("LEVEL")
+        ? "story"
+        : "normal",
+  }))
+
   useEffect(() => {
     if (!isRunning || battleResult || !character || !monster) return
 
@@ -35,7 +55,6 @@ export default function BattlePage() {
       const result = processAutoBattleTurn(character, monster)
 
       result.logs.forEach((log) => addLog(log))
-
       setCharacter(result.character)
       setMonster(result.monster)
 
@@ -61,56 +80,34 @@ export default function BattlePage() {
     setMonster,
   ])
 
-  if (battleResult) {
-    return (
-      <main className="game-page">
-        <div className="game-container">
-          <p className="text-sm text-slate-500">Battle Result</p>
-          <h1 className="game-title">전투 결과</h1>
-
-          <div className="game-panel space-y-4">
-            <p className="text-xl font-bold text-amber-100">
-              {battleResult === "victory" && "승리!"}
-              {battleResult === "defeat" && "패배..."}
-              {battleResult === "escaped" && "전투에서 이탈했다."}
-            </p>
-
-            <BattleLog logs={logs} maxHeight="h-72" />
-
-            {battleResult !== "defeat" && (
-              <ActionButton
-                variant="primary"
-                onClick={() => router.push("/dungeon")}
-              >
-                계속 탐색
-              </ActionButton>
-            )}
-
-            <ActionButton onClick={() => router.push("/town")}>
-              마을로 돌아가기
-            </ActionButton>
-          </div>
-        </div>
-      </main>
-    )
-  }
-
   if (!character || !monster) {
     return (
       <main className="game-page">
-        <div className="game-container">
-          <h1 className="game-title">전투</h1>
+        <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center gap-4 p-4">
+          <h1 className="text-3xl font-bold text-amber-200">전투</h1>
 
-          <div className="game-panel space-y-4">
+          <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
             <p className="text-slate-400">현재 진행 중인 전투가 없습니다.</p>
 
-            <ActionButton onClick={() => router.push("/dungeon")}>
-              계속 탐색
-            </ActionButton>
-
-            <ActionButton onClick={() => router.push("/town")}>
-              마을로 돌아가기
-            </ActionButton>
+            <div className="mt-4 max-w-md">
+              <ActionBar
+                actions={[
+                  {
+                    label: "탐험",
+                    hotkey: "W",
+                    icon: "↑",
+                    variant: "primary",
+                    onClick: () => router.push("/dungeon"),
+                  },
+                  {
+                    label: "마을",
+                    hotkey: "ESC",
+                    icon: "☰",
+                    onClick: () => router.push("/town"),
+                  },
+                ]}
+              />
+            </div>
           </div>
         </div>
       </main>
@@ -136,44 +133,109 @@ export default function BattlePage() {
 
   return (
     <main className="game-page">
-      <div className="game-container">
-        <p className="text-sm text-slate-500">Auto Battle Simulation</p>
-        <h1 className="game-title">전투</h1>
+      <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-3 p-3 lg:p-4">
+        <header className="flex items-end justify-between">
+          <div>
+            <p className="text-xs text-slate-500 lg:text-sm">Battle Encounter</p>
+            <h1 className="text-2xl font-bold text-amber-200 lg:text-3xl">
+              {battleResult ? "전투 결과" : "전투"}
+            </h1>
+          </div>
 
-        <BattleHUD
-          character={character}
-          monster={monster}
-        />
+          <div className="text-right text-sm text-slate-400">
+            <p>{isRunning ? "AUTO BATTLE" : "READY"}</p>
+            {battleResult && (
+              <p className="font-bold text-amber-200">
+                {battleResult === "victory" && "승리"}
+                {battleResult === "defeat" && "패배"}
+                {battleResult === "escaped" && "이탈"}
+              </p>
+            )}
+          </div>
+        </header>
 
-        <BattleScene
-          character={character}
-          monster={monster}
-          location="판도라 미궁"
-          isRunning={isRunning}
-        />
+        <section className="grid flex-1 grid-cols-1 gap-3 lg:grid-cols-[1fr_320px]">
+          <div className="flex min-h-0 flex-col gap-3">
+            {!battleResult && (
+              <BattleScene
+                character={character}
+                monster={monster}
+                location="판도라 미궁"
+                isRunning={isRunning}
+              />
+            )}
 
-        <BattleLog logs={logs} />
+            {battleResult && (
+              <div className="rounded-xl border border-slate-800 bg-slate-950 p-5">
+                <p className="text-xl font-bold text-amber-100">
+                  {battleResult === "victory" && "승리!"}
+                  {battleResult === "defeat" && "패배..."}
+                  {battleResult === "escaped" && "전투에서 이탈했다."}
+                </p>
 
-        <div className="grid grid-cols-2 gap-3">
-          <ActionButton
-            variant="primary"
-            onClick={startBattle}
-            disabled={isRunning}
-          >
-            전투 시작
-          </ActionButton>
+                <p className="mt-2 text-sm text-slate-400">
+                  전투가 종료되었다. 다음 행동을 선택하자.
+                </p>
+              </div>
+            )}
 
-          <ActionButton onClick={pauseBattle} disabled={!isRunning}>
-            일시정지
-          </ActionButton>
+            <GameLog title="전투 로그" logs={gameLogs} />
+          </div>
 
-          <ActionButton onClick={escapeBattle} variant="danger">
-            도주
-          </ActionButton>
+          <PartyHUD members={[character]} />
+        </section>
 
-          <ActionButton onClick={() => router.push("/town")}>
-            마을로 돌아가기
-          </ActionButton>
+        <div className="shrink-0">
+          {battleResult ? (
+            <ActionBar
+              actions={[
+                {
+                  label: "계속 탐험",
+                  hotkey: "W",
+                  icon: "↑",
+                  variant: "primary",
+                  onClick: () => router.push("/dungeon"),
+                },
+                {
+                  label: "마을",
+                  hotkey: "ESC",
+                  icon: "☰",
+                  onClick: () => router.push("/town"),
+                },
+              ]}
+            />
+          ) : (
+            <ActionBar
+              actions={[
+                {
+                  label: "자동전투",
+                  hotkey: "A",
+                  icon: "▶",
+                  variant: "primary",
+                  onClick: startBattle,
+                },
+                {
+                  label: "일시정지",
+                  hotkey: "Space",
+                  icon: "Ⅱ",
+                  onClick: pauseBattle,
+                },
+                {
+                  label: "도주",
+                  hotkey: "ESC",
+                  icon: "↷",
+                  variant: "danger",
+                  onClick: escapeBattle,
+                },
+                {
+                  label: "마을",
+                  hotkey: "M",
+                  icon: "☰",
+                  onClick: () => router.push("/town"),
+                },
+              ]}
+            />
+          )}
         </div>
       </div>
     </main>

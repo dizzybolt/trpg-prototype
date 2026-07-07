@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
-import ActionBar from "../../components/ui/ActionBar"
 import DungeonView from "../../components/dungeon/DungeonView"
 import GameLog from "../../components/ui/GameLog"
 import PartyHUD from "../../components/ui/PartyHUD"
@@ -168,57 +167,22 @@ export default function DungeonPage() {
           </div>
         </header>
 
-        <section className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
+        <section className="grid grid-cols-1 items-stretch gap-3 lg:grid-cols-[1fr_320px]">
           <div className="flex flex-col gap-4">
-            <DungeonView map={dungeonMap} />
+            <DungeonView
+              map={dungeonMap}
+              onTurnLeft={handleTurnLeft}
+              onMoveForward={handleMoveForward}
+              onTurnRight={handleTurnRight}
+              onInspect={handleInspect}
+              onInteract={handleInteract}
+            />
 
             <GameLog title="탐험 기록" logs={exploreLogs} />
           </div>
 
           <PartyHUD members={[character]} />
         </section>
-
-        <ActionBar
-          actions={[
-            {
-              label: "좌회전",
-              hotkey: "Q",
-              icon: "↺",
-              onClick: handleTurnLeft,
-            },
-            {
-              label: "전진",
-              hotkey: "W",
-              icon: "↑",
-              variant: "primary",
-              onClick: handleMoveForward,
-            },
-            {
-              label: "우회전",
-              hotkey: "E",
-              icon: "↻",
-              onClick: handleTurnRight,
-            },
-            {
-              label: "조사",
-              hotkey: "R",
-              icon: "🔍",
-              onClick: handleInspect,
-            },
-            {
-              label: "상호작용",
-              hotkey: "F",
-              icon: "✋",
-              onClick: handleInteract,
-            },
-            {
-              label: "메뉴",
-              hotkey: "ESC",
-              icon: "☰",
-              onClick: () => router.push("/town"),
-            },
-          ]}
-        />
       </div>
     </main>
   )
