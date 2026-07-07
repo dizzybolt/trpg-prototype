@@ -197,3 +197,21 @@ export function getDirectionLabel(direction: Direction) {
 
   return labels[direction]
 }
+
+export function getExplorationRate(map: DungeonMap) {
+  const walkableTiles = map.tiles
+    .flat()
+    .filter((tile) => tile.type !== "wall")
+
+  const discoveredTiles = walkableTiles.filter(
+    (tile) => tile.discovered
+  )
+
+  if (walkableTiles.length === 0) {
+    return 0
+  }
+
+  return Math.round(
+    (discoveredTiles.length / walkableTiles.length) * 100
+  )
+}

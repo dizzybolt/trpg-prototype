@@ -1,12 +1,14 @@
-import Panel from "../ui/Panel"
 import { DungeonMap } from "../../lib/dungeon/dungeonTypes"
 
 type MiniMapProps = {
   map: DungeonMap
+  tileSize?: number
 }
 
-export default function MiniMap({ map }: MiniMapProps) {
-
+export default function MiniMap({
+  map,
+  tileSize = 14,
+}: MiniMapProps) {
   function getPlayerSymbol() {
     switch (map.player.direction) {
       case "north":
@@ -20,28 +22,25 @@ export default function MiniMap({ map }: MiniMapProps) {
       default:
         return "▲"
     }
-  }  
-  
+  }
+
   function getTileSymbol(x: number, y: number) {
     const tile = map.tiles[y][x]
 
-    // 현재 플레이어
     if (map.player.x === x && map.player.y === y) {
       return {
         symbol: getPlayerSymbol(),
-        className: "text-amber-300",
+        className: "text-amber-300 bg-slate-900",
       }
     }
 
-    // 아직 발견하지 못한 지역
     if (!tile.discovered) {
       return {
-        symbol: " ",
+        symbol: "",
         className: "bg-black",
       }
     }
 
-    // 현재 시야 밖
     if (!tile.visible) {
       return {
         symbol: "",
@@ -51,75 +50,32 @@ export default function MiniMap({ map }: MiniMapProps) {
 
     switch (tile.type) {
       case "wall":
-        return {
-          symbol: "■",
-          className: "text-slate-600",
-        }
-
+        return { symbol: "■", className: "text-slate-600 bg-slate-950" }
       case "floor":
-        return {
-          symbol: "·",
-          className: "text-slate-500",
-        }
-
+        return { symbol: "·", className: "text-slate-500 bg-slate-900" }
       case "stairs_down":
-        return {
-          symbol: "▽",
-          className: "text-emerald-300",
-        }
-
+        return { symbol: "▽", className: "text-emerald-300 bg-slate-900" }
       case "stairs_up":
-        return {
-          symbol: "△",
-          className: "text-cyan-300",
-        }
-
+        return { symbol: "△", className: "text-cyan-300 bg-slate-900" }
       case "treasure":
-        return {
-          symbol: "★",
-          className: "text-yellow-300",
-        }
-
+        return { symbol: "★", className: "text-yellow-300 bg-slate-900" }
       case "trap":
-        return {
-          symbol: "×",
-          className: "text-red-400",
-        }
-
+        return { symbol: "×", className: "text-red-400 bg-slate-900" }
       case "door_closed":
-        return {
-          symbol: "▣",
-          className: "text-orange-300",
-        }
-
+        return { symbol: "▣", className: "text-orange-300 bg-slate-900" }
       case "door_open":
-        return {
-          symbol: "□",
-          className: "text-orange-200",
-        }
-
+        return { symbol: "□", className: "text-orange-200 bg-slate-900" }
       default:
-        return {
-          symbol: "?",
-          className: "text-slate-500",
-        }
+        return { symbol: "?", className: "text-slate-500 bg-slate-900" }
     }
   }
 
   return (
-    <Panel
-      title={`${map.name} ${map.floor}층`}
-    >
+    <div>
       <div
-        className="
-          inline-grid
-          gap-[2px]
-          rounded-lg
-          bg-slate-950
-          p-2
-        "
+        className="inline-grid gap-[2px]"
         style={{
-          gridTemplateColumns: `repeat(${map.width}, 20px)`,
+          gridTemplateColumns: `repeat(${map.width}, ${tileSize}px)`,
         }}
       >
         {map.tiles.flat().map((tile) => {
@@ -128,17 +84,11 @@ export default function MiniMap({ map }: MiniMapProps) {
           return (
             <div
               key={`${tile.x}-${tile.y}`}
-              className={`
-                flex
-                h-5
-                w-5
-                items-center
-                justify-center
-                rounded
-                text-xs
-                font-bold
-                ${display.className}
-              `}
+              className={`flex items-center justify-center rounded text-[10px] font-bold ${display.className}`}
+              style={{
+                width: tileSize,
+                height: tileSize,
+              }}
             >
               {display.symbol}
             </div>
@@ -146,19 +96,14 @@ export default function MiniMap({ map }: MiniMapProps) {
         })}
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-y-1 text-xs text-slate-400">
+      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-400">
         <span>▲ 플레이어</span>
-        <span>■ 벽</span>
-
         <span>· 길</span>
-        <span>▽ 아래 계단</span>
-
-        <span>△ 위 계단</span>
+        <span>■ 벽</span>
+        <span>▽ 계단</span>
         <span>★ 보물</span>
-
         <span>× 함정</span>
-        <span>▣ 문</span>
       </div>
-    </Panel>
+    </div>
   )
 }

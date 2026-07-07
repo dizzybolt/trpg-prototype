@@ -10,11 +10,9 @@ type ActionBarProps = {
   actions: ActionButton[]
 }
 
-export default function ActionBar({
-  actions,
-}: ActionBarProps) {
+export default function ActionBar({ actions }: ActionBarProps) {
   return (
-    <div className="grid grid-cols-6 gap-2">
+    <div className="grid grid-cols-3 gap-2 lg:grid-cols-6">
       {actions.map((action) => (
         <button
           key={action.label}
@@ -22,7 +20,8 @@ export default function ActionBar({
           className={`
             rounded-lg
             border
-            p-3
+            px-3
+            py-3
             transition-all
             duration-150
             ${
@@ -34,15 +33,15 @@ export default function ActionBar({
             }
           `}
         >
-          <div className="text-2xl">{action.icon}</div>
+          <div className="text-xl lg:text-2xl">{action.icon}</div>
 
-          <div className="mt-2 text-sm font-semibold">
+          <div className="mt-1 text-xs font-semibold lg:text-sm">
             {action.label}
           </div>
 
           {action.hotkey && (
-            <div className="mt-1 text-xs text-slate-500">
-              [{action.hotkey}]
+            <div className="mt-1 text-[10px] text-slate-500">
+              {action.hotkey}
             </div>
           )}
         </button>
