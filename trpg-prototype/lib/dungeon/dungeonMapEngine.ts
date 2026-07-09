@@ -69,6 +69,8 @@ export function createDungeonMap(floor = 1): DungeonMap {
   tiles[10][9].type = "wall"
 
   // 테스트용 특수 타일
+  tiles[13][2].type = "stairs_up"    // 시작 지점 뒤쪽 입구
+  tiles[2][12].type = "stairs_down"  // 아래층 계단
   tiles[2][12].type = "stairs_down"
   tiles[7][7].type = "treasure"
   tiles[11][5].type = "trap"

@@ -115,7 +115,46 @@ export default function DungeonPage() {
     if (!result.moved) return
 
     if (result.tile.type === "stairs_down") {
-      addExploreLog("아래층으로 내려가는 계단을 발견했다.", "story")
+      const nextFloor = result.map.floor + 1
+      const nextMap = createDungeonMap(nextFloor)
+
+      setDungeonMap(nextMap)
+      setExploreLogs([
+        {
+          text: `판도라 미궁 ${nextFloor}층에 진입했다.`,
+          type: "story",
+        },
+        {
+          text: "뒤쪽에는 위층으로 돌아가는 계단이 있다.",
+          type: "normal",
+        },
+      ])
+
+      return
+    }
+
+    if (result.tile.type === "stairs_up") {
+      if (result.map.floor === 1) {
+        addExploreLog("마을로 돌아가는 입구를 발견했다.", "story")
+        router.push("/town")
+        return
+      }
+
+      const prevFloor = result.map.floor - 1
+      const prevMap = createDungeonMap(prevFloor)
+
+      setDungeonMap(prevMap)
+      setExploreLogs([
+        {
+          text: `판도라 미궁 ${prevFloor}층으로 돌아왔다.`,
+          type: "story",
+        },
+        {
+          text: "뒤쪽에는 아래층으로 내려가는 계단이 있다.",
+          type: "normal",
+        },
+      ])
+
       return
     }
 
