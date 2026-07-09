@@ -29,6 +29,21 @@ function getDirectionSymbol(direction: DungeonMap["player"]["direction"]) {
   }
 }
 
+function getShortDirectionLabel(direction: DungeonMap["player"]["direction"]) {
+  switch (direction) {
+    case "north":
+      return "북"
+    case "east":
+      return "동"
+    case "south":
+      return "남"
+    case "west":
+      return "서"
+    default:
+      return "북"
+  }
+}
+
 export default function DungeonView({
   map,
   onTurnLeft,
@@ -55,81 +70,64 @@ export default function DungeonView({
         </div>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-[220px_1fr]">
-        <div className="space-y-3">
-          <div className="rounded-lg border border-slate-800 bg-black p-4 text-center">
-            <div className="text-5xl text-amber-300">
-              {getDirectionSymbol(map.player.direction)}
-            </div>
-
-            <p className="mt-2 text-sm text-slate-400">
-              {getDirectionLabel(map.player.direction)}을(를) 바라보고 있다
-            </p>
+      <div className="relative flex min-h-[430px] items-center justify-center rounded-lg border border-slate-800 bg-black p-4">
+        <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full border border-cyan-500/40 bg-slate-950/90 px-4 py-2 text-center shadow-lg shadow-black/40">
+          <div className="text-2xl text-cyan-300">
+            {getDirectionSymbol(map.player.direction)}
           </div>
-
-          <div className="grid grid-cols-3 gap-2 text-sm lg:grid-cols-1">
-            <div className="rounded-lg bg-slate-900 p-3">
-              <div className="text-slate-500">현재 위치</div>
-              <div className="mt-1 font-semibold">
-                X {map.player.x} / Y {map.player.y}
-              </div>
-            </div>
-
-            <div className="rounded-lg bg-slate-900 p-3">
-              <div className="text-slate-500">탐사율</div>
-              <div className="mt-1 font-semibold">{explorationRate}%</div>
-            </div>
-
-            <div className="rounded-lg bg-slate-900 p-3">
-              <div className="text-slate-500">현재 상태</div>
-              <div className="mt-1 font-semibold">조용하다...</div>
-            </div>
+          <div className="text-xs font-bold text-cyan-100">
+            {getShortDirectionLabel(map.player.direction)}
+          </div>
+          <div className="mt-1 text-[10px] text-slate-500">
+            X {map.player.x} / Y {map.player.y}
           </div>
         </div>
 
-        <div className="relative flex min-h-[360px] items-center justify-center rounded-lg border border-slate-800 bg-black p-4">
-          <MiniMap map={map} tileSize={16} />
+        <MiniMap map={map} tileSize={19} />
 
-          <div className="absolute bottom-4 left-4 grid grid-cols-3 gap-2">
-            <button
-              onClick={onTurnLeft}
-              className="h-12 w-12 rounded-lg bg-slate-900/95 text-lg font-bold"
-            >
-              ↺
-            </button>
+        <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full border border-slate-700 bg-slate-950/90 px-4 py-1 text-sm font-bold text-slate-200">
+          {explorationRate}%
+        </div>
 
-            <button
-              onClick={onMoveForward}
-              className="h-12 w-12 rounded-lg border border-amber-500 bg-amber-700/90 text-lg font-bold text-white"
-            >
-              ↑
-            </button>
+        <div className="absolute bottom-4 left-4 grid grid-cols-3 gap-2">
+          <button
+            onClick={onTurnLeft}
+            className="h-12 w-12 rounded-lg bg-slate-900/95 text-lg font-bold"
+          >
+            ↺
+          </button>
 
-            <button
-              onClick={onTurnRight}
-              className="h-12 w-12 rounded-lg bg-slate-900/95 text-lg font-bold"
-            >
-              ↻
-            </button>
-          </div>
+          <button
+            onClick={onMoveForward}
+            className="h-12 w-12 rounded-lg border border-amber-500 bg-amber-700/90 text-lg font-bold text-white"
+          >
+            ↑
+          </button>
 
-          <div className="absolute bottom-4 right-4 flex gap-2">
-            <button
-              onClick={onInspect}
-              title="조사"
-              className="h-12 w-12 rounded-full bg-slate-900/95 text-xl"
-            >
-              🔍
-            </button>
+          <button
+            onClick={onTurnRight}
+            className="h-12 w-12 rounded-lg bg-slate-900/95 text-lg font-bold"
+          >
+            ↻
+          </button>
+        </div>
 
-            <button
-              onClick={onInteract}
-              title="상호작용"
-              className="h-12 w-12 rounded-full bg-slate-900/95 text-xl"
-            >
-              ✋
-            </button>
-          </div>
+        <div className="absolute bottom-4 right-4 flex gap-2">
+          <button
+            onClick={onInspect}
+            title="조사"
+            className="h-12 w-12 rounded-full bg-slate-900/95 text-xl"
+          >
+            🔍
+          </button>
+
+          <button
+            onClick={onInteract}
+            title="상호작용"
+            className="h-12 w-12 rounded-full bg-slate-900/95 text-xl"
+          >
+            ✋
+          </button>
         </div>
       </div>
     </div>
