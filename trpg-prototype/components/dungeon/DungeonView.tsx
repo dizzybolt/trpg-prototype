@@ -1,4 +1,4 @@
-import MiniMap from "./MiniMap"
+import MapViewport from "./MapViewport"
 import { DungeonMap } from "../../lib/dungeon/dungeonTypes"
 import {
   getDirectionLabel,
@@ -71,7 +71,7 @@ export default function DungeonView({
       </div>
 
       <div className="relative flex min-h-[430px] items-center justify-center rounded-lg border border-slate-800 bg-black p-4">
-        <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full border border-cyan-500/40 bg-slate-950/90 px-4 py-2 text-center shadow-lg shadow-black/40">
+        <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 bg-slate-950/90 px-4 py-2 text-center shadow-lg shadow-black/40">
           <div className="text-2xl text-cyan-300">
             {getDirectionSymbol(map.player.direction)}
           </div>
@@ -83,7 +83,7 @@ export default function DungeonView({
           </div>
         </div>
 
-        <MiniMap map={map} tileSize={19} />
+        <MapViewport map={map} />
 
         <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full border border-slate-700 bg-slate-950/90 px-4 py-1 text-sm font-bold text-slate-200">
           {explorationRate}%
