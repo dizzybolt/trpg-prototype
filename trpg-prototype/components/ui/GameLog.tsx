@@ -1,3 +1,7 @@
+"use client"
+
+import { useEffect, useRef } from "react"
+
 type LogEntry = {
   text: string
   type?: "normal" | "battle" | "story" | "heal"
@@ -12,17 +16,23 @@ export default function GameLog({
   title = "탐험 기록",
   logs,
 }: GameLogProps) {
+  const logEndRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    logEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    })
+  }, [logs])
+
   function getColor(type?: LogEntry["type"]) {
     switch (type) {
       case "battle":
         return "text-red-300"
-
       case "story":
         return "text-sky-300"
-
       case "heal":
         return "text-emerald-300"
-
       default:
         return "text-slate-300"
     }
@@ -34,15 +44,14 @@ export default function GameLog({
         {title}
       </div>
 
-      <div className="h-36 space-y-2 overflow-y-auto">
+      <div className="h-36 space-y-2 overflow-y-auto pr-2">
         {logs.map((log, index) => (
-          <div
-            key={index}
-            className={`text-sm ${getColor(log.type)}`}
-          >
+          <div key={index} className={`text-sm ${getColor(log.type)}`}>
             ▶ {log.text}
           </div>
         ))}
+
+        <div ref={logEndRef} />
       </div>
     </div>
   )
